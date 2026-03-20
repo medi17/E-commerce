@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme{
+  --color-Mypurple: #8242bd;
+  --color-gray-mono: #1A1A1A;
+  --color-gray-di: #404040;
+  --color-gray-tri: #5E5353;
+  --color-gray-tetra: #897D7D;
+  --color-gray-penta: #BFB6B6;
+  --color-gray-hexa: #E0E0E0;
+  --color-gray-hepta: #edecec;
+  --color-gray-octa: #F3F4F6;
+
+  --font-basic: "Fredoka", sans-serif;
+}
+body{
+  font-family: var(--font-basic);
+  background-color: var(--color-gray-octa);
+}
+
+.header{
+    background-color: #8242bd;
+}
