@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 export default function Cart() {
   const navigate = useNavigate()
-  const { items, removeFromCart, updateQuantity, clearCart, getTotal } = useCartStore()
+  const { cart, addToCart, reduceCart, removeFromCart, clearCart, getTotal } = useCartStore()
   
   const total = getTotal()
   
@@ -13,7 +13,7 @@ export default function Cart() {
     navigate('/products')
   }
   
-  if (items.length === 0) {
+  if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -37,7 +37,7 @@ export default function Cart() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Cart Items */}
           <div className="lg:w-2/3">
-            {items.map(item => (
+            {cart.map(item => (
               <div key={item.id} className="bg-white rounded-lg shadow-md p-4 mb-4">
                 <div className="flex gap-4">
                   <img 
@@ -52,14 +52,14 @@ export default function Cart() {
                     <div className="flex items-center gap-4 mt-2">
                       <div className="flex items-center border rounded">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => reduceCart(item)}
                           className="px-3 py-1 hover:bg-gray-100"
                         >
                           -
                         </button>
                         <span className="px-3 py-1 border-x">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => addToCart(item)}
                           className="px-3 py-1 hover:bg-gray-100"
                         >
                           +
@@ -67,7 +67,7 @@ export default function Cart() {
                       </div>
                       
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item)}
                         className="text-red-500 hover:text-red-700"
                       >
                         Remove
