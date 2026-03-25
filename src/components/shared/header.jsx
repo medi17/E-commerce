@@ -17,6 +17,9 @@ const Header = () => {
                 <h1 className="text-[24px] font-semibold text-Mypurple">EcoShop</h1>
             </NavLink>
             <div className="flex justify-between items-center gap-2">
+                <NavLink to="/admin" className=" text-violet-700 font-medium">
+                    Admin
+                </NavLink>    
                 <NavLink to="/cart" className={`relative`}>
                     <ShoppingCart strokeWidth={2.5} className='text-Mypurple font-bold'/>
                     {itemCount > 0 && (
