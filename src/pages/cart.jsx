@@ -1,15 +1,18 @@
-import useCartStore from '../store/cartStore'
+import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { addToCart, getTotal, reduceCart, removeFromCart } from '../slices/cartSlice'
 
 export default function Cart() {
   const navigate = useNavigate()
-  const { cart, addToCart, reduceCart, removeFromCart, clearCart, getTotal } = useCartStore()
   
-  const total = getTotal()
+  const cart = useSelector((state) => state.cart)
+  const dispatch = useDispatch()
+  const total = useSelector(getTotal)
   
   const handleCheckout = () => {
     alert('Order placed successfully!')
-    clearCart()
+    dispatch(clearCart())
     navigate('/products')
   }
   
@@ -52,14 +55,14 @@ export default function Cart() {
                     <div className="flex items-center gap-4 mt-2">
                       <div className="flex items-center border rounded">
                         <button
-                          onClick={() => reduceCart(item)}
+                          onClick={() => dispatch(reduceCart(item))}
                           className="px-3 py-1 hover:bg-gray-100"
                         >
                           -
                         </button>
                         <span className="px-3 py-1 border-x">{item.quantity}</span>
                         <button
-                          onClick={() => addToCart(item)}
+                          onClick={() => dispatch(addToCart(item))}
                           className="px-3 py-1 hover:bg-gray-100"
                         >
                           +
@@ -67,7 +70,7 @@ export default function Cart() {
                       </div>
                       
                       <button
-                        onClick={() => removeFromCart(item)}
+                        onClick={() => dispatch(removeFromCart(item))}
                         className="text-red-500 hover:text-red-700"
                       >
                         Remove

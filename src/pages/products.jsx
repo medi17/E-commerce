@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { products } from '../data'
-import useCartStore from '../store/cartStore'
 import useAuthStore from '../store/authStore'
 import Header from '../components/shared/header'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../slices/cartSlice'
 
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All')
-  const addToCart = useCartStore(state => state.addToCart)
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
   
   const categories = ['All', ...new Set(products.map(p => p.category))]
@@ -16,12 +16,15 @@ export default function ProductsPage() {
     ? products 
     : products.filter(p => p.category === selectedCategory)
   
+  const dispatch = useDispatch()
+
+
   const handleAddToCart = (product) => {
     if (!isAuthenticated) {
       alert('Please login to add items to cart')
       return
     }
-    addToCart(product)
+    dispatch(addToCart(product))
   }
   
   return (

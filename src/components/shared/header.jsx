@@ -4,12 +4,13 @@ import { NavLink } from 'react-router-dom'
 import useCartStore from '../../store/cartStore'
 import useAuthStore from '../../store/authStore'
 import { CircleUser } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import { getItemCount } from '../../slices/cartSlice'
 
 const Header = () => {
 
-    const itemCount = useCartStore(state => state.getItemCount())
+    const itemCount = useSelector(getItemCount)
     const isAuthenticated = useAuthStore(state => state.isAuthenticated)
-
 
     return (
         <div className="flex justify-between items-center sticky top-0 py-3 px-7 w-full bg-gray-200 dark:bg-gray-800 text-white shadow-sm z-50">
