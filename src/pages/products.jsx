@@ -1,15 +1,23 @@
-import { useState } from 'react'
-import { products } from '../data'
+import { useState, useEffect } from 'react'
 import useCartStore from '../store/cartStore'
 import useAuthStore from '../store/authStore'
 import Header from '../components/shared/header'
+import useProductsStore from '../store/productStore'
+import Loader from '../components/shared/loader'
+import ErrorMessage from '../components/shared/errorPage'
 
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const addToCart = useCartStore(state => state.addToCart)
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const { products, fetchProducts, loading, error } = useProductsStore()
   
+  useEffect(() => {
+    fetchProducts()
+  }, []) 
+
+
   const categories = ['All', ...new Set(products.map(p => p.category))]
   
   const filteredProducts = selectedCategory === 'All' 
@@ -24,6 +32,9 @@ export default function ProductsPage() {
     addToCart(product)
   }
   
+  if (loading) return <Loader />
+  if (error) return <ErrorMessage message={error} onRetry={fetchProducts} />
+
   return (
     <div className="min-h-screen bg-gray-50">
         <Header/>
@@ -54,7 +65,7 @@ export default function ProductsPage() {
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                <h3 className="text-lg font-semibold mb-2">{product.title}</h3>
                 <p className="text-gray-600 text-sm mb-2">{product.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-bold text-Mypurple">
