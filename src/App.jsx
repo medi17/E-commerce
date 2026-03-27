@@ -4,6 +4,7 @@ import Products from './pages/products'
 import AuthPage from './pages/authPage'
 import Admin from './pages/admin'
 import CreateProduct from './pages/createProduct'
+import ProductsDashboard from './components/dashboard/ProductsDashboard'
 
 
 const App = createBrowserRouter([
@@ -27,6 +28,10 @@ const App = createBrowserRouter([
     path: '/createproduct',
     element: <CreateProduct/>    
   },  
+  {
+    path: '/dashboard',
+    element: <ProductsDashboard />
+  }
 ])
 
 export default App
