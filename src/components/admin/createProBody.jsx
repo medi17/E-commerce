@@ -1,36 +1,62 @@
 import { useState } from "react"
-import useProductsStore from "../../store/productStore"
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { productService } from '../../services/productServices'
 
 const CreateProductBody = () => {
-    const { createProduct, loading } = useProductsStore()
+    const queryClient = useQueryClient()
 
-    const [title, setTitle] = useState("")
-    const [price, setPrice] = useState("")
+    const createMutation = useMutation({
+        mutationFn: productService.createProduct,
+        onMutate: async (newProduct) => {
 
-    const handleSubmit = (e) => {
+            await queryClient.cancelQueries({ queryKey: ['products'] })
+        
+            const previousProducts = queryClient.getQueryData(['products', page])
+            
+            queryClient.setQueryData(['products', page], (old) => [
+                { ...newProduct, id: Date.now() },
+                ...old || []
+            ])
+        
+            return { previousProducts }
+        },
+
+        onError: (err, newProduct, context) => {
+            queryClient.setQueryData(['products', page], context.previousProducts)
+            toast.error('Failed to create product')
+        },
+
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['products'] })
+            toast.success('Product created!')
+        }
+    })  
+    
+    const handleCreate = (e) => {
         e.preventDefault()
-        createProduct({ title, price })
-        setTitle("")
-        setPrice("")
-    }
+        const formData = new FormData(e.target)
+        const newProduct = {
+            title: formData.get('title'),
+            price: parseFloat(formData.get('price')),
+            description: formData.get('description'),
+            category: formData.get('category'),
+        }
+        createMutation.mutate(newProduct)
+        e.target.reset()
+    }    
 
     return (
-        <div className="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 mt-10">
-        
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                Create Product
-            </h2>
+        <div className="mx-auto bg-purple-100 shadow-lg rounded-2xl p-6 mt-5 mb-10">
 
             
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleCreate} className="space-y-4 grid grid-cols-1 md:grid-cols-4 gap-4">
 
                 <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">
                         Product Title
                     </label>
                     <input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        name="title"
                         placeholder="e.g. Nike Shoes"
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
                     />
@@ -41,20 +67,43 @@ const CreateProductBody = () => {
                         Price
                     </label>
                     <input
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
+                        name="price"
                         placeholder="e.g. 99.99"
                         type="number"
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
                     />
                 </div>
 
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                        Category
+                    </label>
+                    <input
+                        name="category"
+                        placeholder="e.g. men&rsquo;s cloth"
+                        type="text"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                        Description
+                    </label>
+                    <input
+                        name="description"
+                        placeholder="write description"
+                        type="text"
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                    />
+                </div>                
+
                 <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full bg-Mypurple text-white py-2 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={createMutation.isPending}
+                    className="w-full bg-Mypurple text-white py-2 rounded-lg font-medium hover:bg-purple-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {loading ? "Creating..." : "Add Product"}
+                    {createMutation.isPending ? "Creating..." : "Add Product"}
                 </button>
             </form>
         </div>
