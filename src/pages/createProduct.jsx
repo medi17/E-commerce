@@ -74,7 +74,7 @@ export default function CreateProduct() {
         }
     })
 
-    if (isLoading) return <Loader />
+    
     if (isError) return <ErrorMessage message={error} onRetry={() => fetchUsers(page)} />
 
 
@@ -109,48 +109,52 @@ export default function CreateProduct() {
 
                 <UpdateProduct editingProduct={editingProduct} setEditingProduct={setEditingProduct}/>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse border">
-                    <thead>
-                        <tr className="bg-gray-100">
-                        <th className="border p-2">ID</th>
-                        <th className="border p-2">Title</th>
-                        <th className="border p-2">Price</th>
-                        <th className="border p-2">Category</th>
-                        <th className="border p-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentProducts.map(product => (
-                            <tr key={product.id} className="hover:bg-gray-50 border">
-                                <td className="p-2 text-center">{product.id}</td>
-                                <td className="border p-2">{product.title}</td>
-                                <td className="p-2">${product.price}</td>
-                                <td className="border p-2">{product.category || 'N/A'}</td>
-                                <td className="pt-3 text-center flex px-6 gap-2">
-                                    <button
-                                        onClick={() => setEditingProduct(product)}
-                                        className="text-blue-500 mr-2 cursor-pointer"
-                                    >
-                                        <PenBox/>
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                        if (confirm('Delete this product?')) {
-                                            deleteMutation.mutate(product.id)
-                                        }
-                                        }}
-                                        disabled={deleteMutation.isPending}
-                                        className="text-red-500 mr-2 cursor-pointer"
-                                    >
-                                        <Trash/>
-                                    </button>
-                                </td>
+                { isLoading ? (
+                    <Loader />
+                ):(
+                    <div className="overflow-x-auto">
+                        <table className="w-full border-collapse border">
+                        <thead>
+                            <tr className="bg-gray-100">
+                            <th className="border p-2">ID</th>
+                            <th className="border p-2">Title</th>
+                            <th className="border p-2">Price</th>
+                            <th className="border p-2">Category</th>
+                            <th className="border p-2">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                    </table>
-                </div>
+                        </thead>
+                        <tbody>
+                            {currentProducts.map(product => (
+                                <tr key={product.id} className="hover:bg-gray-50 border">
+                                    <td className="p-2 text-center">{product.id}</td>
+                                    <td className="border p-2">{product.title}</td>
+                                    <td className="p-2">${product.price}</td>
+                                    <td className="border p-2">{product.category || 'N/A'}</td>
+                                    <td className="pt-3 text-center flex px-6 gap-2">
+                                        <button
+                                            onClick={() => setEditingProduct(product)}
+                                            className="text-blue-500 mr-2 cursor-pointer"
+                                        >
+                                            <PenBox/>
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                            if (confirm('Delete this product?')) {
+                                                deleteMutation.mutate(product.id)
+                                            }
+                                            }}
+                                            disabled={deleteMutation.isPending}
+                                            className="text-red-500 mr-2 cursor-pointer"
+                                        >
+                                            <Trash/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        </table>
+                    </div>
+                )}
  
                 <div className="flex justify-center gap-4 mt-6">
                     <button
